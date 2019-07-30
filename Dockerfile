@@ -1,6 +1,6 @@
 FROM quay.io/fedora/fedora:31-x86_64
 
-ENV SQUID_OPTS ""
+ENV SQUID_OPTS "-N -d 3"
 ENV SQUID_CONF "/etc/squid/squid.conf"
 
 # Squid and tools for troubleshooting
