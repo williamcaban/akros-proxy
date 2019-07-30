@@ -1,0 +1,31 @@
+# Copy (chmod 664) to /etc/systemd/system/akros-proxy.service
+#
+# systemctl daemon-reload
+# systemctl start  akros-proxy
+# systemctl status akros-proxy
+# systemctl enable akros-proxy
+#
+# podman pull quay.io/wcaban/squid
+# mkdir -pv /opt/squid
+
+[Unit]
+Description=Squid Proxy Server
+After=network.target syslog.target
+
+[Service]
+Type=simple
+TimeoutStartSec=5m
+ExecStartPre=-/usr/bin/podman rm "akros-proxy"
+
+ExecStart=/usr/bin/podman run --name akros-proxy -p 3128:3128/tcp \
+        -v /opt/squid/squid.conf:/etc/squid/squid.conf:ro \
+        quay.io/wcaban/squid
+
+ExecReload=-/usr/bin/podman stop "akros-proxy"
+ExecReload=-/usr/bin/podman rm   "akros-proxy"
+ExecStop=-/usr/bin/podman   stop "akros-proxy"
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
